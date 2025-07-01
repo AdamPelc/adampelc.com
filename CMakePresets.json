@@ -1,0 +1,37 @@
+{
+  "version": 10,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 31
+  },
+  "configurePresets": [
+    {
+      "name": "release",
+      "displayName": "Release configuration",
+      "description": "Release configuration using Ninja generator",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/out/build/${presetName}",
+      "cacheVariables": {
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "release",
+      "displayName": "Release build",
+      "description": "Release build using Ninja",
+      "configurePreset": "release"
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "all",
+      "displayName": "Run all tests",
+      "configurePreset": "release"
+    }
+  ],
+  "packagePresets": [],
+  "workflowPresets": []
+}

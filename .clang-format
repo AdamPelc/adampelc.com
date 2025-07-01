@@ -1,0 +1,39 @@
+# Based on Google's style but with modern enhancements
+BasedOnStyle: Google
+
+# Increase max line length for modern screens
+ColumnLimit: 100
+
+# Use 4 spaces instead of 2 for better visual hierarchy (optional)
+IndentWidth: 4
+ContinuationIndentWidth: 4
+
+# Require braces for clarity, even for single-line ifs
+AlwaysBreakBeforeMultilineStrings: false
+AlwaysBreakTemplateDeclarations: Yes
+BreakBeforeBraces: Attach
+AllowShortIfStatementsOnASingleLine: false
+
+# Modern readability
+SpaceBeforeParens: ControlStatements
+SpacesInAngles: false
+SpacesInCStyleCastParentheses: false
+SpacesInContainerLiterals: false
+SpacesInParentheses: false
+
+# Include management
+SortIncludes: true
+IncludeBlocks: Regroup
+
+# Aligning
+AlignAfterOpenBracket: Align
+AlignConsecutiveAssignments: true
+AlignOperands: true
+
+# C++ specific modern improvements
+DerivePointerAlignment: false
+PointerAlignment: Left  # Ensures `int* ptr` not `int *ptr`
+Standard: c++20
+
+# Optional: control access specifier indentation
+AccessModifierOffset: -4

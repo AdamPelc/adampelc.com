@@ -39,3 +39,38 @@
 
 # debug information files
 *.dwo
+
+# CMake Presets for local user
+CMakeUserPresets.json
+
+# Generated files
+out
+
+# Ignore the entire .idea folder by default
+.idea/
+
+# But keep shared settings that are useful for team consistency:
+
+# Project-wide code style settings (shared with team)
+!.idea/codeStyles
+!.idea/codeStyles/*.xml
+
+# Static code analysis rules (can be shared across team)
+!.idea/inspectionProfiles
+!.idea/inspectionProfiles/*.xml
+
+# General project metadata:
+!.idea/misc.xml       # Contains project SDK, language level, and other global project settings
+!.idea/modules.xml    # Lists project modules and their structure
+!.idea/vcs.xml        # Version control system mapping (e.g., Git); safe to share
+
+# User-specific files that should be ignored:
+
+.idea/workspace.xml   # Stores user UI layout, opened tabs, breakpoints, run configs, etc.
+.idea/tasks.xml       # Contains task history and context for local tasks
+.idea/dictionaries    # Personal custom spell-check dictionaries
+.idea/httpRequests    # Stores local HTTP client request history
+.idea/.name           # Stores the name of the project as it appears in the IDE (user-specific)
+
+# Optional: ignore run/debug config templates (can be shared if needed)
+.idea/runConfigurations/  # Contains individual run configurations; ignore if they’re personal
