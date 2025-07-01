@@ -16,3 +16,16 @@ endif()
 # Required packages
 find_package(GTest CONFIG REQUIRED)
 find_package(benchmark CONFIG REQUIRED)
+
+# Extra utilities
+include(cmake/CompilerWarnings.cmake)
+
+# Close commonly used utilities in single library
+add_library(project_utilities INTERFACE)
+target_link_libraries(project_utilities
+INTERFACE
+  compiler_warnings
+)
+
+# Content
+add_subdirectory(articles)
