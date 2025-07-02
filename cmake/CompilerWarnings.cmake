@@ -31,11 +31,12 @@ if(CMAKE_CXX_COMPILER_ID MATCHES ".*Clang")
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   set(COMPILER_WARNINGS_CXX ${GCC_WARNINGS})
 else()
-  message(AUTHOR_WARNING "No compiler warnings set for CXX compiler: '${CMAKE_CXX_COMPILER_ID}'")
+  message(FATAL_ERROR "No compiler warnings set for CXX compiler: '${CMAKE_CXX_COMPILER_ID}'")
 endif()
 
-add_library(compiler_warnings INTERFACE)
+message(STATUS "COMPILER_WARNINGS_CXX='${COMPILER_WARNINGS_CXX}'")
 
+add_library(compiler_warnings INTERFACE)
 target_compile_options(compiler_warnings
 INTERFACE
   ${COMPILER_WARNINGS_CXX}

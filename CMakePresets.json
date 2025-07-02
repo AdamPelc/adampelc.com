@@ -6,14 +6,55 @@
   },
   "configurePresets": [
     {
-      "name": "release",
-      "displayName": "Release configuration",
-      "description": "Release configuration using Ninja generator",
+      "name": "default",
+      "hidden": true,
       "generator": "Ninja",
       "binaryDir": "${sourceDir}/out/build/${presetName}",
       "cacheVariables": {
-        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+      }
+    },
+    {
+      "name": "release",
+      "inherits": [
+        "default"
+      ],
+      "displayName": "Release configuration",
+      "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "asan_ubsan",
+      "inherits": [
+        "default"
+      ],
+      "displayName": "ASAN and UBSAN sanitizer configuration optimized (-O2)",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "ASAN_ENABLED": true,
+        "UBSAN_ENABLED": true
+      }
+    },
+    {
+      "name": "tsan",
+      "inherits": [
+        "default"
+      ],
+      "displayName": "TSAN optimized (-O2)",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "TSAN_ENABLED": true
+      }
+    },
+    {
+      "name": "debug",
+      "inherits": [
+        "default"
+      ],
+      "displayName": "Debug configuration without optimizations",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
       }
     }
   ],
@@ -21,8 +62,22 @@
     {
       "name": "release",
       "displayName": "Release build",
-      "description": "Release build using Ninja",
       "configurePreset": "release"
+    },
+    {
+      "name": "asan_ubsan",
+      "displayName": "ASAN and TSAN build",
+      "configurePreset": "asan_ubsan"
+    },
+    {
+      "name": "tsan",
+      "displayName": "TSAN build",
+      "configurePreset": "tsan"
+    },
+    {
+      "name": "debug",
+      "displayName": "debug build",
+      "configurePreset": "debug"
     }
   ],
   "testPresets": [
