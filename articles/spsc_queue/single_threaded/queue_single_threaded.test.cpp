@@ -8,14 +8,14 @@
 class test_class_no_default_ctor_t {
 public:
     test_class_no_default_ctor_t() = delete;
-    constexpr explicit test_class_no_default_ctor_t(int value) : m_value(value) {}
+    constexpr explicit test_class_no_default_ctor_t(int value) : m_value(std::make_shared<int>(value)) {}
 
     [[nodiscard]]
     friend bool operator==(const test_class_no_default_ctor_t& lhs, const test_class_no_default_ctor_t& rhs) {
-        return lhs.m_value == rhs.m_value;
+        return *lhs.m_value == *rhs.m_value;
     }
 private:
-    int m_value;
+    std::shared_ptr<int> m_value;
 };
 
 template <typename element_T>
@@ -26,7 +26,7 @@ TYPED_TEST_SUITE(queue_single_threaded_test_t, test_types_t);
 
 TYPED_TEST(queue_single_threaded_test_t, single_enqueue_dequeue) {
     spsc_queue::queue_single_threaded_t<TypeParam, 1> queue;
-    constexpr auto expected_element = TypeParam(0xDEAD);
+    auto expected_element = TypeParam(0xDEAD);
 
     queue.enqueue(expected_element);
     const auto result = queue.try_dequeue();

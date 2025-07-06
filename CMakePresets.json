@@ -25,6 +25,16 @@
       }
     },
     {
+      "name": "rel_with_deb_info",
+      "inherits": [
+        "default"
+      ],
+      "displayName": "Optimized configuration with debug symbols",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+      }
+    },
+    {
       "name": "asan_ubsan",
       "inherits": [
         "default"

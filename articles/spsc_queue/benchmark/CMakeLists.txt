@@ -1,0 +1,11 @@
+add_executable(spsc_queue.benchmark)
+target_sources(spsc_queue.benchmark
+PRIVATE
+  spsc_queue.benchmark.cpp
+)
+target_link_libraries(spsc_queue.benchmark
+  project_utilities
+  spsc_queue
+  benchmark::benchmark
+  benchmark::benchmark_main
+)

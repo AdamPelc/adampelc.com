@@ -8,4 +8,5 @@ PRIVATE
   gtest_main
 )
 
+add_subdirectory(benchmark)
 add_subdirectory(single_threaded)
