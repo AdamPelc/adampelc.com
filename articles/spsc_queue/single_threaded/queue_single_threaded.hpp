@@ -3,12 +3,14 @@
 #include <cstdint>
 #include <optional>
 #include <stdexcept>
+#include <bit>
 
 namespace spsc_queue {
     template<typename data_T, std::size_t size_T>
     class queue_single_threaded_t {
     public:
         static_assert(size_T > 0, "Doesn't make sense");
+        static_assert(std::popcount(size_T) == 1, "Size of the queue must be power of 2");
 
         queue_single_threaded_t() = default;
         ~queue_single_threaded_t();
@@ -21,6 +23,9 @@ namespace spsc_queue {
         struct cell_t {
             alignas(data_T) std::byte m_buffer[sizeof(data_T)];
         };
+
+        static constexpr std::size_t m_mask = size_T - 1;
+
         std::size_t m_write_idx = 0;
         std::size_t m_read_idx = 0;
         std::array<cell_t, size_T> m_cells;
@@ -33,7 +38,7 @@ namespace spsc_queue {
 
     template<typename data_T, std::size_t size_T>
     auto queue_single_threaded_t<data_T, size_T>::enqueue(data_T element) -> void {
-        auto index = m_write_idx % size_T;
+        auto index = m_write_idx & m_mask;
         cell_t& cell = m_cells[index];
         const auto distance = m_write_idx - m_read_idx;
         if (distance >= size_T) {
@@ -51,7 +56,7 @@ namespace spsc_queue {
             return false;
         }
 
-        const auto read_idx = m_read_idx % size_T;
+        const auto read_idx = m_read_idx & m_mask;
 
         auto* element = reinterpret_cast<data_T*>(m_cells[read_idx].m_buffer);
         element_out = std::move(*element);
@@ -66,8 +71,7 @@ namespace spsc_queue {
             return false;
         }
 
-        const auto read_idx = m_read_idx % size_T;
-
+        const auto read_idx = m_read_idx & m_mask;
         auto* element = reinterpret_cast<data_T*>(m_cells[read_idx].m_buffer);
         element->~data_T();
         ++m_read_idx;

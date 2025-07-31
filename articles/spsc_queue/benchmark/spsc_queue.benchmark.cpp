@@ -10,7 +10,7 @@
 #define REPEAT16(x) REPEAT8(x); REPEAT8(x)
 
 static void BM_queue_single_threaded_enqueue_only(benchmark::State& state) {
-    spsc_queue::queue_single_threaded_t<int, 1'000> queue;
+    spsc_queue::queue_single_threaded_t<int, 1024> queue;
     for (auto _ : state) {
         REPEAT16(queue.enqueue(1));
     }
@@ -18,7 +18,7 @@ static void BM_queue_single_threaded_enqueue_only(benchmark::State& state) {
 }
 
 static void BM_queue_single_threaded_enqueue_9_dequeue_1(benchmark::State& state) {
-    spsc_queue::queue_single_threaded_t<int, 1'000> queue;
+    spsc_queue::queue_single_threaded_t<int, 1024> queue;
     bool enqueue = true;
     int buffer;
     for (auto _ : state) {
@@ -34,7 +34,7 @@ static void BM_queue_single_threaded_enqueue_9_dequeue_1(benchmark::State& state
 }
 
 static void BM_queue_single_threaded_enqueue_3_dequeue_1(benchmark::State& state) {
-    spsc_queue::queue_single_threaded_t<int, 1'000> queue;
+    spsc_queue::queue_single_threaded_t<int, 1024> queue;
     bool enqueue = true;
     int buffer;
     for (auto _ : state) {
@@ -50,7 +50,7 @@ static void BM_queue_single_threaded_enqueue_3_dequeue_1(benchmark::State& state
 }
 
 static void BM_queue_single_threaded_enqueue_1_dequeue_1(benchmark::State& state) {
-    spsc_queue::queue_single_threaded_t<int, 1'000> queue;
+    spsc_queue::queue_single_threaded_t<int, 1024> queue;
     int buffer;
     for (auto _ : state) {
         queue.enqueue(0xDEAD);
@@ -60,7 +60,7 @@ static void BM_queue_single_threaded_enqueue_1_dequeue_1(benchmark::State& state
 }
 
 static void BM_queue_single_threaded_enqueue_1_dequeue_3(benchmark::State& state) {
-    spsc_queue::queue_single_threaded_t<int, 1'000> queue;
+    spsc_queue::queue_single_threaded_t<int, 1024> queue;
     bool enqueue = true;
     int buffer;
     for (auto _ : state) {
@@ -76,7 +76,7 @@ static void BM_queue_single_threaded_enqueue_1_dequeue_3(benchmark::State& state
 }
 
 static void BM_queue_single_threaded_enqueue_1_dequeue_9(benchmark::State& state) {
-    spsc_queue::queue_single_threaded_t<int, 1'000> queue;
+    spsc_queue::queue_single_threaded_t<int, 1024> queue;
     bool enqueue = true;
     int buffer;
     for (auto _ : state) {
@@ -92,7 +92,7 @@ static void BM_queue_single_threaded_enqueue_1_dequeue_9(benchmark::State& state
 }
 
 static void BM_queue_single_threaded_dequeue_only(benchmark::State& state) {
-    spsc_queue::queue_single_threaded_t<int, 1'000> queue;
+    spsc_queue::queue_single_threaded_t<int, 1024> queue;
     int buffer;
     for (auto _ : state) {
         REPEAT16(::benchmark::DoNotOptimize(queue.try_dequeue(buffer)));

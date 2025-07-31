@@ -80,7 +80,7 @@ TYPED_TEST(queue_single_threaded_test_t, discard_empty) {
 }
 
 TYPED_TEST(queue_single_threaded_test_t, muliple_enqueue_all_dequeue) {
-    spsc_queue::queue_single_threaded_t<TypeParam, 3> queue;
+    spsc_queue::queue_single_threaded_t<TypeParam, 4> queue;
 
     auto expected_elements = std::vector{ TypeParam(0xDEAD'1), TypeParam(0xDEAD'2), TypeParam(0xDEAD'3) };
 
@@ -98,7 +98,7 @@ TYPED_TEST(queue_single_threaded_test_t, muliple_enqueue_all_dequeue) {
 }
 
 TYPED_TEST(queue_single_threaded_test_t, muliple_enqueue_all_discard) {
-    spsc_queue::queue_single_threaded_t<TypeParam, 3> queue;
+    spsc_queue::queue_single_threaded_t<TypeParam, 4> queue;
 
     auto expected_elements = std::vector{ TypeParam(0xDEAD'1), TypeParam(0xDEAD'2), TypeParam(0xDEAD'3) };
 
@@ -134,11 +134,12 @@ TYPED_TEST(queue_single_threaded_test_t, multiple_enqueue_all_dequeue_oversize) 
     ASSERT_EQ(expected_elements, actual_elements);
 }
 
-TYPED_TEST(queue_single_threaded_test_t, multiple_enqueue_all_discard_oversize) {
-    spsc_queue::queue_single_threaded_t<TypeParam, 2> queue;
 
-    auto enqueued_elements = std::vector{ TypeParam(0xDEAD'1), TypeParam(0xDEAD'2), TypeParam(0xDEAD'3) };
-    auto expected_elements = std::vector{ TypeParam(0xDEAD'2), TypeParam(0xDEAD'3) };
+TYPED_TEST(queue_single_threaded_test_t, multiple_enqueue_all_discard_oversize) {
+    spsc_queue::queue_single_threaded_t<TypeParam, 4> queue{};
+
+    auto enqueued_elements = std::vector{ TypeParam(0xDEAD'1), TypeParam(0xDEAD'2), TypeParam(0xDEAD'3), TypeParam(0xDEAD'4), TypeParam(0xDEAD'5) };
+    auto expected_elements = std::vector{ TypeParam(0xDEAD'2), TypeParam(0xDEAD'3), TypeParam(0xDEAD'4), TypeParam(0xDEAD'5) };
 
     for (const auto& element : enqueued_elements) {
         queue.enqueue(element);
@@ -171,7 +172,7 @@ TYPED_TEST(queue_single_threaded_test_t, wraparound_behavior_size_one) {
 }
 
 TYPED_TEST(queue_single_threaded_test_t, mixed_enqueue_dequeue_operations) {
-    spsc_queue::queue_single_threaded_t<TypeParam, 3> queue;
+    spsc_queue::queue_single_threaded_t<TypeParam, 4> queue;
     
     // Pattern: enqueue 2, dequeue 1, enqueue 1, dequeue 2
     queue.enqueue(TypeParam(1));
@@ -211,17 +212,18 @@ TYPED_TEST(queue_single_threaded_test_t, partial_fill_and_drain_cycles) {
 }
 
 TYPED_TEST(queue_single_threaded_test_t, exact_capacity_boundary) {
-    spsc_queue::queue_single_threaded_t<TypeParam, 3> queue;
+    spsc_queue::queue_single_threaded_t<TypeParam, 4> queue{};
     
     // Fill to exact capacity
     queue.enqueue(TypeParam(1));
     queue.enqueue(TypeParam(2));
     queue.enqueue(TypeParam(3));
-    
-    // One more should overwrite first
     queue.enqueue(TypeParam(4));
     
-    // Should get elements 2, 3, 4
+    // One more should overwrite first
+    queue.enqueue(TypeParam(5));
+    
+    // Should get elements 2, 3, 4, 5
     auto element = TypeParam(0);
     ASSERT_TRUE(queue.try_dequeue(element));
     ASSERT_EQ(TypeParam(2), element);
@@ -229,6 +231,8 @@ TYPED_TEST(queue_single_threaded_test_t, exact_capacity_boundary) {
     ASSERT_EQ(TypeParam(3), element);
     ASSERT_TRUE(queue.try_dequeue(element));
     ASSERT_EQ(TypeParam(4), element);
+    ASSERT_TRUE(queue.try_dequeue(element));
+    ASSERT_EQ(TypeParam(5), element);
     ASSERT_FALSE(queue.try_dequeue(element));
 }
 
@@ -305,12 +309,13 @@ TYPED_TEST(queue_single_threaded_test_t, dequeue_failure_preserves_output_parame
 }
 
 TYPED_TEST(queue_single_threaded_test_t, queue_state_consistency_after_operations) {
-    spsc_queue::queue_single_threaded_t<TypeParam, 3> queue;
+    spsc_queue::queue_single_threaded_t<TypeParam, 4> queue;
     
     // Fill queue
     queue.enqueue(TypeParam(1));
     queue.enqueue(TypeParam(2));
     queue.enqueue(TypeParam(3));
+    queue.enqueue(TypeParam(4));
     
     // Partial drain
     auto element = TypeParam(0);
@@ -318,7 +323,7 @@ TYPED_TEST(queue_single_threaded_test_t, queue_state_consistency_after_operation
     ASSERT_EQ(TypeParam(1), element);
     
     // Add one more (should not overwrite)
-    queue.enqueue(TypeParam(4));
+    queue.enqueue(TypeParam(5));
     
     // Verify remaining elements in correct order
     ASSERT_TRUE(queue.try_dequeue(element));
@@ -327,6 +332,8 @@ TYPED_TEST(queue_single_threaded_test_t, queue_state_consistency_after_operation
     ASSERT_EQ(TypeParam(3), element);
     ASSERT_TRUE(queue.try_dequeue(element));
     ASSERT_EQ(TypeParam(4), element);
+    ASSERT_TRUE(queue.try_dequeue(element));
+    ASSERT_EQ(TypeParam(5), element);
     ASSERT_FALSE(queue.try_dequeue(element));
 }
 
@@ -371,7 +378,7 @@ struct large_object_t {
 
 // Performance/behavior tests with different data types
 TEST(queue_single_threaded_performance_test_t, large_object_operations) {
-    spsc_queue::queue_single_threaded_t<large_object_t, 3> queue;
+    spsc_queue::queue_single_threaded_t<large_object_t, 4> queue;
     
     // Test with large objects
     queue.enqueue(large_object_t(1));
@@ -389,7 +396,7 @@ TEST(queue_single_threaded_performance_test_t, large_object_operations) {
 }
 
 TEST(queue_single_threaded_string_test_t, string_fifo_ordering) {
-    spsc_queue::queue_single_threaded_t<std::string, 5> queue;
+    spsc_queue::queue_single_threaded_t<std::string, 8> queue;
     
     std::vector<std::string> input_strings = {
         "first", "second", "third", "fourth", "fifth"
@@ -411,17 +418,19 @@ TEST(queue_single_threaded_string_test_t, string_fifo_ordering) {
 }
 
 TEST(queue_single_threaded_string_test_t, string_overwrite_behavior) {
-    spsc_queue::queue_single_threaded_t<std::string, 3> queue;
+    spsc_queue::queue_single_threaded_t<std::string, 4> queue{};
     
     // Fill beyond capacity
     queue.enqueue(std::string("first"));
     queue.enqueue(std::string("second"));
     queue.enqueue(std::string("third"));
-    queue.enqueue(std::string("fourth"));  // Should overwrite "first"
-    queue.enqueue(std::string("fifth"));   // Should overwrite "second"
+    queue.enqueue(std::string("fourth"));
+    queue.enqueue(std::string("fifth"));   // Should overwrite "first"
     
-    // Should get "third", "fourth", "fifth"
+    // Should get "second", "third", "fourth", "fifth"
     std::string result;
+    ASSERT_TRUE(queue.try_dequeue(result));
+    ASSERT_EQ("second", result);
     ASSERT_TRUE(queue.try_dequeue(result));
     ASSERT_EQ("third", result);
     ASSERT_TRUE(queue.try_dequeue(result));
@@ -432,7 +441,7 @@ TEST(queue_single_threaded_string_test_t, string_overwrite_behavior) {
 }
 
 TEST(queue_single_threaded_large_capacity_test_t, large_queue_behavior) {
-    constexpr std::size_t large_size = 1000;
+    constexpr std::size_t large_size = 1024;
     spsc_queue::queue_single_threaded_t<int, large_size> queue;
     
     // Fill entire queue
