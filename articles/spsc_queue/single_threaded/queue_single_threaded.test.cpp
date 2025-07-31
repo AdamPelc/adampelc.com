@@ -28,19 +28,52 @@ TYPED_TEST(queue_single_threaded_test_t, single_enqueue_dequeue) {
     spsc_queue::queue_single_threaded_t<TypeParam, 1> queue;
     auto expected_element = TypeParam(0xDEAD);
 
+    // Act
     queue.enqueue(expected_element);
-    const auto result = queue.try_dequeue();
+    auto actual_element = TypeParam(0);
+    const auto is_successful_dequeue = queue.try_dequeue(actual_element);
 
-    ASSERT_TRUE(result);
-    ASSERT_EQ(expected_element, result.value());
+    ASSERT_TRUE(is_successful_dequeue);
+    ASSERT_EQ(expected_element, actual_element);
+}
+
+TYPED_TEST(queue_single_threaded_test_t, single_enqueue_single_discard) {
+    spsc_queue::queue_single_threaded_t<TypeParam, 1> queue;
+    auto expected_element = TypeParam(0xDEAD);
+
+    // Act
+    queue.enqueue(expected_element);
+    const auto is_successful_discard = queue.try_discard();
+
+    ASSERT_TRUE(is_successful_discard);
+}
+
+TYPED_TEST(queue_single_threaded_test_t, single_enqueue_dual_discard) {
+    spsc_queue::queue_single_threaded_t<TypeParam, 1> queue;
+    auto expected_element = TypeParam(0xDEAD);
+
+    // Act
+    queue.enqueue(expected_element);
+    queue.try_discard();
+
+    const auto is_successful_discard = queue.try_discard();
+    ASSERT_FALSE(is_successful_discard);
 }
 
 TYPED_TEST(queue_single_threaded_test_t, dequeue_empty) {
     spsc_queue::queue_single_threaded_t<TypeParam, 1> queue;
 
-    const auto result = queue.try_dequeue();
+    auto actual_element = TypeParam(0);
+    const auto is_successful_dequeue = queue.try_dequeue(actual_element);
 
-    ASSERT_EQ(std::nullopt, result);
+    ASSERT_FALSE(is_successful_dequeue);
+}
+
+TYPED_TEST(queue_single_threaded_test_t, discard_empty) {
+    spsc_queue::queue_single_threaded_t<TypeParam, 1> queue;
+
+    const auto is_successful_discard = queue.try_discard();
+    ASSERT_FALSE(is_successful_discard);
 }
 
 TYPED_TEST(queue_single_threaded_test_t, muliple_enqueue_all_dequeue) {
@@ -52,13 +85,31 @@ TYPED_TEST(queue_single_threaded_test_t, muliple_enqueue_all_dequeue) {
         queue.enqueue(element);
     }
 
-    std::vector<TypeParam> actual_elements;
-    actual_elements.reserve(expected_elements.size());
-    while (const auto element = queue.try_dequeue()) {
-        actual_elements.push_back(element.value());
+    std::vector<TypeParam> actual_elements(std::size(expected_elements), TypeParam(0));
+    for (auto& actual_element : actual_elements) {
+        const auto is_successful_dequeue = queue.try_dequeue(actual_element);
+        ASSERT_TRUE(is_successful_dequeue);
     }
 
     ASSERT_EQ(expected_elements, actual_elements);
+}
+
+TYPED_TEST(queue_single_threaded_test_t, muliple_enqueue_all_discard) {
+    spsc_queue::queue_single_threaded_t<TypeParam, 3> queue;
+
+    auto expected_elements = std::vector{ TypeParam(0xDEAD'1), TypeParam(0xDEAD'2), TypeParam(0xDEAD'3) };
+
+    for (const auto& element : expected_elements) {
+        queue.enqueue(element);
+    }
+
+    for (const auto& _ : expected_elements) {
+        const auto is_successful_discard = queue.try_discard();
+        ASSERT_TRUE(is_successful_discard);
+    }
+
+    const auto is_successful_discard = queue.try_discard();
+    ASSERT_FALSE(is_successful_discard);
 }
 
 TYPED_TEST(queue_single_threaded_test_t, multiple_enqueue_all_dequeue_oversize) {
@@ -71,11 +122,31 @@ TYPED_TEST(queue_single_threaded_test_t, multiple_enqueue_all_dequeue_oversize) 
         queue.enqueue(element);
     }
 
-    std::vector<TypeParam> actual_elements;
-    actual_elements.reserve(expected_elements.size());
-    while (const auto element = queue.try_dequeue()) {
-        actual_elements.push_back(element.value());
+    std::vector<TypeParam> actual_elements(std::size(expected_elements), TypeParam(0));
+    for (auto& actual_element : actual_elements) {
+        const auto is_successful_dequeue = queue.try_dequeue(actual_element);
+        ASSERT_TRUE(is_successful_dequeue);
     }
 
     ASSERT_EQ(expected_elements, actual_elements);
 }
+
+TYPED_TEST(queue_single_threaded_test_t, multiple_enqueue_all_discard_oversize) {
+    spsc_queue::queue_single_threaded_t<TypeParam, 2> queue;
+
+    auto enqueued_elements = std::vector{ TypeParam(0xDEAD'1), TypeParam(0xDEAD'2), TypeParam(0xDEAD'3) };
+    auto expected_elements = std::vector{ TypeParam(0xDEAD'2), TypeParam(0xDEAD'3) };
+
+    for (const auto& element : enqueued_elements) {
+        queue.enqueue(element);
+    }
+
+    for (const auto& _ : expected_elements) {
+        const auto is_successful_dequeue = queue.try_discard();
+        ASSERT_TRUE(is_successful_dequeue);
+    }
+
+    const auto is_successful_discard = queue.try_discard();
+    ASSERT_FALSE(is_successful_discard);
+}
+

@@ -1,4 +1,5 @@
 set(CLANG_WARNINGS
+  -Werror
   -Wall
   -Wextra # reasonable and standard
   -Wshadow # warn the user if a variable declaration shadows one from a parent context

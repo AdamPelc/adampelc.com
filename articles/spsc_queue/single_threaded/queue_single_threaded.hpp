@@ -14,6 +14,7 @@ namespace spsc_queue {
 
         auto enqueue(data_T element) -> void;
         auto try_dequeue(data_T& element_out) -> bool;
+        auto try_discard() -> bool;
 
     private:
         struct cell_t {
@@ -26,8 +27,7 @@ namespace spsc_queue {
 
     template<typename data_T, std::size_t size_T>
     queue_single_threaded_t<data_T, size_T>::~queue_single_threaded_t() {
-        int discard_buffer;
-        while (this->try_dequeue(discard_buffer)) {}
+        while (this->try_discard()) {}
     }
 
     template<typename data_T, std::size_t size_T>
@@ -54,6 +54,20 @@ namespace spsc_queue {
 
         auto* element = reinterpret_cast<data_T*>(m_cells[read_idx].m_buffer);
         element_out = std::move(*element);
+        element->~data_T();
+        ++m_read_idx;
+        return true;
+    }
+
+    template<typename data_T, std::size_t size_T>
+    auto queue_single_threaded_t<data_T, size_T>::try_discard() -> bool {
+        if (m_write_idx == m_read_idx) {
+            return false;
+        }
+
+        const auto read_idx = m_read_idx % size_T;
+
+        auto* element = reinterpret_cast<data_T*>(m_cells[read_idx].m_buffer);
         element->~data_T();
         ++m_read_idx;
         return true;
