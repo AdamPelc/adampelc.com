@@ -10,6 +10,7 @@ namespace spsc_queue {
     public:
         static_assert(size_T > 0, "Doesn't make sense");
 
+        queue_single_threaded_t() = default;
         ~queue_single_threaded_t();
 
         auto enqueue(data_T element) -> void;
