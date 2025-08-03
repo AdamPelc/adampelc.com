@@ -13,7 +13,7 @@ elseif(${CMAKE_BUILD_TYPE} STREQUAL "Optimized")
   )
 elseif(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
   set(COMPILER_OPTIMIZATION_FLAGS_CXX
-    -Og
+    -O0
     -g
   )
 else()

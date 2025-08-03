@@ -90,7 +90,7 @@ Examples:
     
     # Construct the command with taskset and benchmark parameters
     cmd = [
-        "taskset", "-c", "0,1",
+        "taskset", "-c", "0,2",
         str(binary_path),
         "--benchmark_min_warmup_time=1",
         "--benchmark_min_time=5s",
