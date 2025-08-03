@@ -9,4 +9,5 @@ PRIVATE
 )
 
 add_subdirectory(benchmark)
+add_subdirectory(locking)
 add_subdirectory(single_threaded)
