@@ -75,6 +75,7 @@ namespace spsc_queue {
             return false;
         }
 
+        // Following is required for synchronization in forced enqueue
         if (m_cell_lock.test_and_set(std::memory_order_acquire)) {
             return false;
         }

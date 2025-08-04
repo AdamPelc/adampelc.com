@@ -9,7 +9,7 @@ namespace spsc_queue {
     template<typename data_T, std::size_t size_T>
     class queue_single_threaded_t {
     public:
-        static_assert(size_T > 0, "Doesn't make sense");
+        static_assert(size_T >= 2, "Queue size must be at least 2");
         static_assert(std::popcount(size_T) == 1, "Size of the queue must be power of 2");
 
         queue_single_threaded_t() = default;

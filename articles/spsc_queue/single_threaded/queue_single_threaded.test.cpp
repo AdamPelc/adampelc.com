@@ -28,7 +28,7 @@ using test_types_t = ::testing::Types<int, test_class_no_default_ctor_t>;
 TYPED_TEST_SUITE(queue_single_threaded_test_t, test_types_t);
 
 TYPED_TEST(queue_single_threaded_test_t, single_enqueue_dequeue) {
-    spsc_queue::queue_single_threaded_t<TypeParam, 1> queue;
+    spsc_queue::queue_single_threaded_t<TypeParam, 2> queue;
     auto expected_element = TypeParam(0xDEAD);
 
     // Act
@@ -41,7 +41,7 @@ TYPED_TEST(queue_single_threaded_test_t, single_enqueue_dequeue) {
 }
 
 TYPED_TEST(queue_single_threaded_test_t, single_enqueue_single_discard) {
-    spsc_queue::queue_single_threaded_t<TypeParam, 1> queue;
+    spsc_queue::queue_single_threaded_t<TypeParam, 2> queue;
     auto expected_element = TypeParam(0xDEAD);
 
     // Act
@@ -52,7 +52,7 @@ TYPED_TEST(queue_single_threaded_test_t, single_enqueue_single_discard) {
 }
 
 TYPED_TEST(queue_single_threaded_test_t, single_enqueue_dual_discard) {
-    spsc_queue::queue_single_threaded_t<TypeParam, 1> queue;
+    spsc_queue::queue_single_threaded_t<TypeParam, 2> queue;
     auto expected_element = TypeParam(0xDEAD);
 
     // Act
@@ -64,7 +64,7 @@ TYPED_TEST(queue_single_threaded_test_t, single_enqueue_dual_discard) {
 }
 
 TYPED_TEST(queue_single_threaded_test_t, dequeue_empty) {
-    spsc_queue::queue_single_threaded_t<TypeParam, 1> queue;
+    spsc_queue::queue_single_threaded_t<TypeParam, 2> queue;
 
     auto actual_element = TypeParam(0);
     const auto is_successful_dequeue = queue.try_dequeue(actual_element);
@@ -73,7 +73,7 @@ TYPED_TEST(queue_single_threaded_test_t, dequeue_empty) {
 }
 
 TYPED_TEST(queue_single_threaded_test_t, discard_empty) {
-    spsc_queue::queue_single_threaded_t<TypeParam, 1> queue;
+    spsc_queue::queue_single_threaded_t<TypeParam, 2> queue;
 
     const auto is_successful_discard = queue.try_discard();
     ASSERT_FALSE(is_successful_discard);
@@ -156,7 +156,7 @@ TYPED_TEST(queue_single_threaded_test_t, multiple_enqueue_all_discard_oversize) 
 
 // Edge cases and boundary conditions
 TYPED_TEST(queue_single_threaded_test_t, wraparound_behavior_size_one) {
-    spsc_queue::queue_single_threaded_t<TypeParam, 1> queue;
+    spsc_queue::queue_single_threaded_t<TypeParam, 2> queue;
 
     // Multiple cycles of enqueue/dequeue to test wraparound
     for (int cycle = 0; cycle < 5; ++cycle) {
