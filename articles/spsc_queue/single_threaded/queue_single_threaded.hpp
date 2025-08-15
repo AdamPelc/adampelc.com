@@ -41,7 +41,7 @@ namespace spsc_queue {
         auto index = m_write_idx & m_mask;
         cell_t& cell = m_cells[index];
         const auto distance = m_write_idx - m_read_idx;
-        if (distance >= size_T) {
+        if (distance == size_T) {
             auto* old_element = reinterpret_cast<data_T*>(&cell.m_buffer);
             old_element->~data_T();
             ++m_read_idx;

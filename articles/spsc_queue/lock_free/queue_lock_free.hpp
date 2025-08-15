@@ -19,7 +19,7 @@ namespace spsc_queue {
         auto try_discard() -> bool;
 
     private:
-        struct cell_t {
+        struct alignas(64) cell_t {
             alignas(data_T) std::byte m_buffer[sizeof(data_T)];
         };
 
@@ -43,7 +43,7 @@ namespace spsc_queue {
         auto read_idx = m_read_idx.load(std::memory_order_acquire);
 
         const auto index = write_idx & m_mask;
-        if (write_idx - read_idx >= size_T) {
+        if (write_idx - read_idx == size_T) {
 
             // Wait for free cell
             while (m_cell_lock.test_and_set(std::memory_order_acquire)) {}
@@ -80,7 +80,7 @@ namespace spsc_queue {
             return false;
         }
 
-        read_idx = m_read_idx.load(std::memory_order_relaxed);
+        read_idx = m_read_idx.load(std::memory_order_acquire);
         const auto index = read_idx & m_mask;
         auto* element = reinterpret_cast<data_T*>(m_cells[index].m_buffer);
         element_out = std::move(*element);

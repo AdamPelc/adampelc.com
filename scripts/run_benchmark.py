@@ -76,7 +76,7 @@ Examples:
     
     # Create output directory and filename
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    output_filename = f"{args.binary}_{timestamp}.csv"
+    output_filename = f"{args.binary}_{timestamp}.out"
     output_dir = project_root / "out" / "measurements" / args.variant / relative_path
     output_path = output_dir / output_filename
     
@@ -95,7 +95,8 @@ Examples:
         "--benchmark_min_warmup_time=1",
         "--benchmark_min_time=5s",
         "--benchmark_repetitions=10",
-        "--benchmark_out_format=csv",
+        "--benchmark_counters_tabular=true"
+        "--benchmark_out_format=console",
         f"--benchmark_out={output_path}"
     ]
     

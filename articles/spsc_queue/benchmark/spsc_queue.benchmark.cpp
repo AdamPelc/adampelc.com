@@ -238,10 +238,10 @@ static void BM_queue_locking_enqueue_9_dequeue_1(benchmark::State& state) {
     }
 
     if (is_producer) {
-        state.counters["1) enqueue"] = ::benchmark::Counter(9, ::benchmark::Counter::kIsRate);
+        state.counters["1) enqueue"] = ::benchmark::Counter(counter, ::benchmark::Counter::kIsRate);
         state.SetItemsProcessed(state.iterations() * 9 * min_repeats);
     } else {
-        state.counters["2) try_dequeue"] = ::benchmark::Counter(1, ::benchmark::Counter::kIsRate);
+        state.counters["2) try_dequeue"] = ::benchmark::Counter(counter, ::benchmark::Counter::kIsRate);
         state.SetItemsProcessed(state.iterations() * min_repeats);
     }
 }
@@ -435,10 +435,10 @@ static void BM_queue_lock_free_enqueue_9_dequeue_1(benchmark::State& state) {
     }
 
     if (is_producer) {
-        state.counters["1) enqueue"] = ::benchmark::Counter(9, ::benchmark::Counter::kIsRate);
+        state.counters["1) enqueue"] = ::benchmark::Counter(counter, ::benchmark::Counter::kIsRate);
         state.SetItemsProcessed(state.iterations() * 9 * min_repeats);
     } else {
-        state.counters["2) try_dequeue"] = ::benchmark::Counter(1, ::benchmark::Counter::kIsRate);
+        state.counters["2) try_dequeue"] = ::benchmark::Counter(counter, ::benchmark::Counter::kIsRate);
         state.SetItemsProcessed(state.iterations() * min_repeats);
     }
 }
